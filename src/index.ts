@@ -34,10 +34,14 @@ export function init(
   return { flush: () => transport!.flush() };
 }
 
-export function shutdown(): void {
+export async function shutdown(): Promise<void> {
   stopConsoleCapture();
   stopErrorCapture();
-  if (transport) { transport.shutdown(); transport = null; }
+  if (transport) {
+    await transport.flush();
+    transport.shutdown();
+    transport = null;
+  }
   logger = null;
 }
 

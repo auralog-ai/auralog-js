@@ -19,6 +19,6 @@ export class Logger {
   fatal(message: string, metadata?: Record<string, unknown>, stackTrace?: string): void { this.log("fatal", message, metadata, stackTrace); }
 
   private log(level: LogLevel, message: string, metadata?: Record<string, unknown>, stackTrace?: string): void {
-    this.handler({ level, message, metadata, stackTrace, timestamp: new Date().toISOString() });
+    this.handler({ level, message, metadata, stackTrace, environment: this.environment, timestamp: new Date().toISOString() });
   }
 }

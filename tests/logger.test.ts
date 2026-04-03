@@ -31,4 +31,9 @@ describe("Logger", () => {
     const ts = new Date(logs[0].timestamp);
     expect(ts.getTime()).not.toBeNaN();
   });
+
+  it("stamps environment on each log entry", () => {
+    logger.info("test");
+    expect(logs[0].environment).toBe("test-env");
+  });
 });

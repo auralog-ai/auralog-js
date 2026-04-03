@@ -14,5 +14,6 @@ export interface InternalLogEntry {
   message: string;
   metadata?: Record<string, unknown>;
   stackTrace?: string;
+  environment?: string;
   timestamp: string;
 }
