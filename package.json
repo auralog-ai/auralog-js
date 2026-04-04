@@ -1,6 +1,6 @@
 {
   "name": "auralog-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Agentic logging and application awareness. Simplified.",
   "type": "module",
   "main": "./dist/index.js",
