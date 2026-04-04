@@ -1,6 +1,7 @@
 {
-  "name": "auralog",
-  "version": "0.0.1",
+  "name": "auralog-sdk",
+  "version": "0.1.0",
+  "description": "Agentic logging and application awareness. Simplified.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,12 +12,26 @@
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "tsc"
   },
-  "dependencies": {
-    "@auralog/shared": "workspace:*"
+  "keywords": [
+    "logging",
+    "ai",
+    "claude",
+    "observability",
+    "error-tracking",
+    "monitoring"
+  ],
+  "author": "James Thomas",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamescethomas/auralog"
   },
+  "homepage": "https://auralog-dashboard.pages.dev",
   "devDependencies": {
+    "@types/node": "^25.5.2",
     "@vitest/coverage-v8": "^3.2.4",
     "vitest": "^3.0.0"
   }

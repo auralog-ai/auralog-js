@@ -1,4 +1,4 @@
-import { DEFAULT_FLUSH_INTERVAL_MS } from "@auralog/shared";
+import { DEFAULT_FLUSH_INTERVAL_MS } from "./types.js";
 import { Logger } from "./logger.js";
 import { Transport } from "./transport.js";
 import { startConsoleCapture, stopConsoleCapture } from "./console-capture.js";
@@ -58,4 +58,4 @@ export const auralog = {
   fatal(message: string, metadata?: Record<string, unknown>, stackTrace?: string) { assertInitialized().fatal(message, metadata, stackTrace); },
 };
 
-export type { AuralogConfig } from "./types.js";
+export type { AuralogConfig, LogLevel } from "./types.js";

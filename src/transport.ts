@@ -1,4 +1,4 @@
-import { isAtOrAboveLevel } from "@auralog/shared";
+import { isAtOrAboveLevel } from "./types.js";
 import type { InternalLogEntry } from "./types.js";
 
 interface TransportConfig {

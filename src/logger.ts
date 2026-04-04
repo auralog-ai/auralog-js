@@ -1,4 +1,4 @@
-import type { LogLevel } from "@auralog/shared";
+import type { LogLevel } from "./types.js";
 import type { InternalLogEntry } from "./types.js";
 
 export type LogHandler = (entry: InternalLogEntry) => void;
