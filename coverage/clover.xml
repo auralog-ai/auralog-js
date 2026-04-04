@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1775244383389" clover="3.2.0">
+  <project timestamp="1775244383389" name="All files">
+    <metrics statements="158" coveredstatements="154" conditionals="52" coveredconditionals="45" methods="32" coveredmethods="28" elements="242" coveredelements="227" complexity="0" loc="158" ncloc="158" packages="1" files="6" classes="6"/>
+    <file name="console-capture.ts" path="/Users/james/Development/auralog/packages/sdk/src/console-capture.ts">
+      <metrics statements="24" coveredstatements="24" conditionals="7" coveredconditionals="6" methods="3" coveredmethods="3"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="9" count="1" type="stmt"/>
+      <line num="10" count="1" type="stmt"/>
+      <line num="12" count="1" type="stmt"/>
+      <line num="14" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="15" count="5" type="cond" truecount="0" falsecount="1"/>
+      <line num="16" count="5" type="stmt"/>
+      <line num="18" count="5" type="cond" truecount="1" falsecount="0"/>
+      <line num="19" count="15" type="stmt"/>
+      <line num="20" count="15" type="cond" truecount="1" falsecount="0"/>
+      <line num="21" count="4" type="stmt"/>
+      <line num="22" count="4" type="stmt"/>
+      <line num="23" count="4" type="stmt"/>
+      <line num="24" count="15" type="stmt"/>
+      <line num="25" count="5" type="stmt"/>
+      <line num="27" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="28" count="13" type="cond" truecount="2" falsecount="0"/>
+      <line num="29" count="5" type="stmt"/>
+      <line num="30" count="5" type="stmt"/>
+      <line num="31" count="5" type="stmt"/>
+      <line num="32" count="5" type="stmt"/>
+      <line num="33" count="5" type="stmt"/>
+    </file>
+    <file name="error-capture.ts" path="/Users/james/Development/auralog/packages/sdk/src/error-capture.ts">
+      <metrics statements="23" coveredstatements="23" conditionals="11" coveredconditionals="10" methods="4" coveredmethods="4"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="8" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="9" count="4" type="cond" truecount="0" falsecount="1"/>
+      <line num="11" count="4" type="cond" truecount="1" falsecount="0"/>
+      <line num="12" count="1" type="stmt"/>
+      <line num="13" count="1" type="stmt"/>
+      <line num="15" count="4" type="cond" truecount="1" falsecount="0"/>
+      <line num="16" count="2" type="stmt"/>
+      <line num="17" count="2" type="stmt"/>
+      <line num="18" count="2" type="stmt"/>
+      <line num="19" count="2" type="cond" truecount="2" falsecount="0"/>
+      <line num="20" count="2" type="cond" truecount="2" falsecount="0"/>
+      <line num="21" count="2" type="stmt"/>
+      <line num="22" count="2" type="stmt"/>
+      <line num="23" count="2" type="stmt"/>
+      <line num="25" count="4" type="stmt"/>
+      <line num="26" count="4" type="stmt"/>
+      <line num="27" count="4" type="stmt"/>
+      <line num="29" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="30" count="8" type="cond" truecount="1" falsecount="0"/>
+      <line num="31" count="8" type="cond" truecount="1" falsecount="0"/>
+      <line num="32" count="8" type="stmt"/>
+    </file>
+    <file name="index.ts" path="/Users/james/Development/auralog/packages/sdk/src/index.ts">
+      <metrics statements="48" coveredstatements="44" conditionals="11" coveredconditionals="8" methods="9" coveredmethods="5"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="9" count="1" type="stmt"/>
+      <line num="11" count="1" type="stmt"/>
+      <line num="13" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="14" count="2" type="stmt"/>
+      <line num="15" count="2" type="stmt"/>
+      <line num="16" count="2" type="stmt"/>
+      <line num="17" count="2" type="stmt"/>
+      <line num="18" count="2" type="stmt"/>
+      <line num="19" count="2" type="cond" truecount="0" falsecount="1"/>
+      <line num="20" count="2" type="stmt"/>
+      <line num="21" count="2" type="stmt"/>
+      <line num="22" count="2" type="stmt"/>
+      <line num="24" count="2" type="cond" truecount="1" falsecount="0"/>
+      <line num="26" count="2" type="cond" truecount="0" falsecount="1"/>
+      <line num="27" count="0" type="stmt"/>
+      <line num="28" count="0" type="stmt"/>
+      <line num="30" count="2" type="cond" truecount="0" falsecount="1"/>
+      <line num="31" count="0" type="stmt"/>
+      <line num="32" count="0" type="stmt"/>
+      <line num="34" count="2" type="cond" truecount="1" falsecount="0"/>
+      <line num="35" count="2" type="stmt"/>
+      <line num="37" count="3" type="cond" truecount="1" falsecount="0"/>
+      <line num="38" count="3" type="stmt"/>
+      <line num="39" count="3" type="stmt"/>
+      <line num="40" count="3" type="cond" truecount="1" falsecount="0"/>
+      <line num="41" count="2" type="stmt"/>
+      <line num="42" count="2" type="stmt"/>
+      <line num="43" count="2" type="stmt"/>
+      <line num="44" count="2" type="stmt"/>
+      <line num="45" count="3" type="stmt"/>
+      <line num="46" count="3" type="stmt"/>
+      <line num="48" count="2" type="cond" truecount="1" falsecount="0"/>
+      <line num="49" count="2" type="cond" truecount="1" falsecount="0"/>
+      <line num="50" count="1" type="stmt"/>
+      <line num="51" count="1" type="stmt"/>
+      <line num="53" count="1" type="stmt"/>
+      <line num="54" count="1" type="stmt"/>
+      <line num="55" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="56" count="1" type="stmt"/>
+      <line num="57" count="1" type="stmt"/>
+      <line num="58" count="1" type="stmt"/>
+      <line num="59" count="1" type="stmt"/>
+    </file>
+    <file name="logger.ts" path="/Users/james/Development/auralog/packages/sdk/src/logger.ts">
+      <metrics statements="16" coveredstatements="16" conditionals="8" coveredconditionals="8" methods="8" coveredmethods="8"/>
+      <line num="6" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="7" count="6" type="stmt"/>
+      <line num="8" count="6" type="stmt"/>
+      <line num="10" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="11" count="6" type="stmt"/>
+      <line num="12" count="6" type="stmt"/>
+      <line num="13" count="6" type="stmt"/>
+      <line num="15" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="16" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="17" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="18" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="19" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="21" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="22" count="9" type="stmt"/>
+      <line num="23" count="9" type="stmt"/>
+      <line num="24" count="6" type="stmt"/>
+    </file>
+    <file name="transport.ts" path="/Users/james/Development/auralog/packages/sdk/src/transport.ts">
+      <metrics statements="47" coveredstatements="47" conditionals="14" coveredconditionals="12" methods="7" coveredmethods="7"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="11" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="12" count="7" type="stmt"/>
+      <line num="13" count="7" type="stmt"/>
+      <line num="14" count="7" type="stmt"/>
+      <line num="15" count="7" type="stmt"/>
+      <line num="16" count="7" type="stmt"/>
+      <line num="17" count="7" type="stmt"/>
+      <line num="18" count="7" type="stmt"/>
+      <line num="20" count="7" type="cond" truecount="1" falsecount="0"/>
+      <line num="21" count="7" type="stmt"/>
+      <line num="22" count="7" type="stmt"/>
+      <line num="23" count="7" type="stmt"/>
+      <line num="24" count="7" type="cond" truecount="0" falsecount="1"/>
+      <line num="25" count="7" type="stmt"/>
+      <line num="26" count="7" type="stmt"/>
+      <line num="28" count="7" type="cond" truecount="1" falsecount="0"/>
+      <line num="29" count="9" type="cond" truecount="0" falsecount="1"/>
+      <line num="30" count="9" type="cond" truecount="1" falsecount="0"/>
+      <line num="33" count="2" type="cond" truecount="1" falsecount="0"/>
+      <line num="34" count="9" type="stmt"/>
+      <line num="35" count="9" type="stmt"/>
+      <line num="37" count="7" type="cond" truecount="1" falsecount="0"/>
+      <line num="38" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="39" count="4" type="stmt"/>
+      <line num="40" count="6" type="stmt"/>
+      <line num="42" count="7" type="cond" truecount="1" falsecount="0"/>
+      <line num="43" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="44" count="3" type="stmt"/>
+      <line num="45" count="3" type="stmt"/>
+      <line num="46" count="3" type="stmt"/>
+      <line num="47" count="3" type="stmt"/>
+      <line num="48" count="3" type="stmt"/>
+      <line num="49" count="3" type="stmt"/>
+      <line num="50" count="6" type="stmt"/>
+      <line num="52" count="7" type="cond" truecount="1" falsecount="0"/>
+      <line num="53" count="7" type="stmt"/>
+      <line num="54" count="7" type="stmt"/>
+      <line num="55" count="7" type="stmt"/>
+      <line num="57" count="7" type="cond" truecount="1" falsecount="0"/>
+      <line num="58" count="2" type="stmt"/>
+      <line num="59" count="2" type="stmt"/>
+      <line num="60" count="2" type="stmt"/>
+      <line num="61" count="2" type="stmt"/>
+      <line num="62" count="2" type="stmt"/>
+      <line num="63" count="2" type="stmt"/>
+      <line num="64" count="7" type="stmt"/>
+    </file>
+    <file name="types.ts" path="/Users/james/Development/auralog/packages/sdk/src/types.ts">
+      <metrics statements="0" coveredstatements="0" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
+    </file>
+  </project>
+</coverage>
