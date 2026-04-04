@@ -21,7 +21,7 @@ export class Transport {
     this.apiKey = config.apiKey;
     this.endpoint = config.endpoint;
     this.flushInterval = config.flushInterval;
-    this.fetchFn = config.fetchFn ?? fetch;
+    this.fetchFn = config.fetchFn ?? fetch.bind(globalThis);
     this.scheduleNext();
   }
 
