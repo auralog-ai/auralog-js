@@ -53,4 +53,51 @@ describe("Transport", () => {
     await transport.flush();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
+
+  describe("network error handling", () => {
+    let warnSpy: ReturnType<typeof vi.spyOn>;
+    let unhandled: unknown[];
+    let unhandledListener: (e: PromiseRejectionEvent | { reason: unknown }) => void;
+
+    beforeEach(() => {
+      warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      unhandled = [];
+      unhandledListener = (e: any) => { unhandled.push(e.reason ?? e); };
+      process.on("unhandledRejection", unhandledListener as any);
+    });
+
+    afterEach(() => {
+      warnSpy.mockRestore();
+      process.off("unhandledRejection", unhandledListener as any);
+    });
+
+    it("flush() does not throw when fetch rejects", async () => {
+      fetchSpy.mockRejectedValueOnce(new Error("network down"));
+      transport.send(makeEntry("info", "lost"));
+      await expect(transport.flush()).resolves.toBeUndefined();
+      expect(warnSpy).toHaveBeenCalledWith("auralog: failed to send logs", expect.any(Error));
+    });
+
+    it("keeps rescheduling the flush loop after a failed flush", async () => {
+      fetchSpy.mockRejectedValueOnce(new Error("boom"));
+      transport.send(makeEntry("info", "first"));
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+      // Timer loop must still be alive — next interval should flush the next batch.
+      fetchSpy.mockResolvedValueOnce({ ok: true } as Response);
+      transport.send(makeEntry("info", "second"));
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it("sendSingle path does not produce an unhandled rejection when fetch rejects", async () => {
+      fetchSpy.mockRejectedValueOnce(new Error("network down"));
+      transport.send(makeEntry("error", "boom"));
+      // Drain microtasks so the fire-and-forget sendSingle settles.
+      for (let i = 0; i < 5; i++) await Promise.resolve();
+      expect(unhandled).toEqual([]);
+      expect(warnSpy).toHaveBeenCalledWith("auralog: failed to send log", expect.any(Error));
+    });
+  });
 });
