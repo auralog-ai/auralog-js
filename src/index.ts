@@ -24,11 +24,11 @@ export function init(
   logger = new Logger(config.environment, (entry) => { transport!.send(entry); });
 
   if (config.captureConsole) {
-    startConsoleCapture((entry) => transport!.send(entry));
+    startConsoleCapture((entry) => transport!.send(entry), config.environment);
   }
 
   if (config.captureErrors !== false) {
-    startErrorCapture((entry) => transport!.send(entry));
+    startErrorCapture((entry) => transport!.send(entry), config.environment);
   }
 
   return { flush: () => transport!.flush() };

@@ -11,14 +11,14 @@ const METHOD_TO_LEVEL: Record<string, LogLevel> = {
 
 let originals: Record<string, (...args: unknown[]) => void> | null = null;
 
-export function startConsoleCapture(handler: LogHandler): void {
+export function startConsoleCapture(handler: LogHandler, environment?: string): void {
   if (originals) return;
   originals = { log: console.log, warn: console.warn, error: console.error };
 
   for (const [method, level] of Object.entries(METHOD_TO_LEVEL)) {
     const original = originals[method];
     (console as unknown as Record<string, (...args: unknown[]) => void>)[method] = (...args: unknown[]) => {
-      handler({ level, message: args.map(String).join(" "), timestamp: new Date().toISOString() });
+      handler({ level, message: args.map(String).join(" "), environment, timestamp: new Date().toISOString() });
       original.apply(console, args);
     };
   }

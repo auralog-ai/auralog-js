@@ -10,12 +10,12 @@ let rejectionHandler: ((reason: unknown) => void) | null = null;
 let browserErrorHandler: ((event: ErrorEvent) => void) | null = null;
 let browserRejectionHandler: ((event: PromiseRejectionEvent) => void) | null = null;
 
-export function startErrorCapture(handler: LogHandler): void {
+export function startErrorCapture(handler: LogHandler, environment?: string): void {
   if (uncaughtHandler || browserErrorHandler) return;
 
   if (isNode) {
     uncaughtHandler = (err: Error) => {
-      handler({ level: "fatal", message: err.message, stackTrace: err.stack, timestamp: new Date().toISOString() });
+      handler({ level: "fatal", message: err.message, stackTrace: err.stack, environment, timestamp: new Date().toISOString() });
     };
     rejectionHandler = (reason: unknown) => {
       const isError = reason instanceof Error;
@@ -23,6 +23,7 @@ export function startErrorCapture(handler: LogHandler): void {
         level: "error",
         message: isError ? reason.message : String(reason),
         stackTrace: isError ? reason.stack : undefined,
+        environment,
         timestamp: new Date().toISOString(),
       });
     };
@@ -34,6 +35,7 @@ export function startErrorCapture(handler: LogHandler): void {
         level: "fatal",
         message: event.message,
         stackTrace: event.error?.stack,
+        environment,
         timestamp: new Date().toISOString(),
       });
     };
@@ -44,6 +46,7 @@ export function startErrorCapture(handler: LogHandler): void {
         level: "error",
         message: isError ? reason.message : String(reason),
         stackTrace: isError ? reason.stack : undefined,
+        environment,
         timestamp: new Date().toISOString(),
       });
     };
