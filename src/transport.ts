@@ -42,11 +42,17 @@ export class Transport {
   async flush(): Promise<void> {
     if (this.buffer.length === 0) return;
     const logs = this.buffer.splice(0);
-    await this.fetchFn(`${this.endpoint}/v1/logs`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ projectApiKey: this.apiKey, logs }),
-    });
+    try {
+      await this.fetchFn(`${this.endpoint}/v1/logs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectApiKey: this.apiKey, logs }),
+      });
+    } catch (err) {
+      // Swallow so a single network failure does not kill the reschedule loop
+      // in scheduleNext() or surface as an unhandled rejection in the host app.
+      console.warn("auralog: failed to send logs", err);
+    }
   }
 
   shutdown(): void {
@@ -55,10 +61,16 @@ export class Transport {
   }
 
   private async sendSingle(entry: InternalLogEntry): Promise<void> {
-    await this.fetchFn(`${this.endpoint}/v1/logs/single`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ projectApiKey: this.apiKey, log: entry }),
-    });
+    try {
+      await this.fetchFn(`${this.endpoint}/v1/logs/single`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectApiKey: this.apiKey, log: entry }),
+      });
+    } catch (err) {
+      // send() dispatches this as `void sendSingle(...)`, so an uncaught reject
+      // would become an unhandled promise rejection in the host app.
+      console.warn("auralog: failed to send log", err);
+    }
   }
 }
