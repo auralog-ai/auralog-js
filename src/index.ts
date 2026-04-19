@@ -8,7 +8,7 @@ import type { AuralogConfig } from "./types.js";
 let logger: Logger | null = null;
 let transport: Transport | null = null;
 
-const DEFAULT_ENDPOINT = "https://ingest.auralog.dev";
+const DEFAULT_ENDPOINT = "https://ingest.auralog.ai";
 
 export function init(
   config: AuralogConfig,

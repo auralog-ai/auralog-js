@@ -13,7 +13,7 @@ describe("Transport", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    transport = new Transport({ apiKey: "aura_test", endpoint: "https://ingest.auralog.dev", flushInterval: 5000, fetchFn: fetchSpy });
+    transport = new Transport({ apiKey: "aura_test", endpoint: "https://ingest.auralog.ai", flushInterval: 5000, fetchFn: fetchSpy });
   });
 
   afterEach(() => { transport.shutdown(); vi.useRealTimers(); });
@@ -33,14 +33,14 @@ describe("Transport", () => {
     transport.send(makeEntry("error", "boom"));
     await Promise.resolve();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralog.dev/v1/logs/single");
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralog.ai/v1/logs/single");
   });
 
   it("flushes immediately for fatal level", async () => {
     transport.send(makeEntry("fatal", "crash"));
     await Promise.resolve();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralog.dev/v1/logs/single");
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralog.ai/v1/logs/single");
   });
 
   it("does not flush when buffer is empty", async () => {
