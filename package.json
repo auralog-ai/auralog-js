@@ -27,9 +27,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jamescethomas/auralog"
+    "url": "https://github.com/auralog-ai/auralog-js.git"
   },
-  "homepage": "https://auralog-dashboard.pages.dev",
+  "homepage": "https://auralog.ai",
+  "bugs": {
+    "url": "https://github.com/auralog-ai/auralog-js/issues"
+  },
   "devDependencies": {
     "@types/node": "^25.5.2",
     "@vitest/coverage-v8": "^3.2.4",
