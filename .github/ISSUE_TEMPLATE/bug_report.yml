@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a bug in the Auralog JavaScript SDK
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the sections below.
+
+        For security vulnerabilities, **do not open an issue** — see [SECURITY.md](https://github.com/auralog-ai/auralog-js/blob/main/SECURITY.md).
+
+  - type: input
+    id: sdk-version
+    attributes:
+      label: SDK version
+      description: The version of `auralog-sdk` you're using
+      placeholder: "0.1.5"
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime
+      description: Node version, browser, Deno, Bun, etc.
+      placeholder: "Node 22.11.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Code that demonstrates the bug. The smaller the better.
+      render: ts
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include error messages and stack traces if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might help (logs, screenshots, related issues).
