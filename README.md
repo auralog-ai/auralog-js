@@ -5,6 +5,7 @@ JavaScript/TypeScript SDK for [Auralog](https://auralog.ai) — agentic logging 
 Auralog uses Claude as an on-call engineer: it monitors your logs and errors, alerts you when something's wrong, and opens fix PRs automatically.
 
 [![npm version](https://img.shields.io/npm/v/auralog-sdk.svg)](https://www.npmjs.com/package/auralog-sdk)
+[![provenance verified](https://img.shields.io/badge/provenance-verified-2dba4e?logo=sigstore&logoColor=white)](https://www.npmjs.com/package/auralog-sdk)
 [![license](https://img.shields.io/npm/l/auralog-sdk.svg)](./LICENSE)
 
 ## Install
@@ -54,6 +55,18 @@ process.on("SIGTERM", async () => {
 ## Documentation
 
 Full docs at [docs.auralog.ai](https://docs.auralog.ai).
+
+## Verify this package
+
+Every release is published with [sigstore provenance attestations](https://docs.npmjs.com/generating-provenance-statements) built directly in GitHub Actions. The attestation proves the tarball was built from a specific commit in this repository via `.github/workflows/release.yml` — without having to trust npm or the maintainer.
+
+To verify in your own project:
+
+```bash
+npm audit signatures
+```
+
+Or inspect the attestation on [npmjs.com/package/auralog-sdk](https://www.npmjs.com/package/auralog-sdk) under "Provenance".
 
 ## Security
 
