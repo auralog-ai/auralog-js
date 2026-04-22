@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { init, auralog, shutdown } from "../src/index.js";
+import { init, auralog, shutdown, getTraceId, setTraceId } from "../src/index.js";
 
 describe("init + auralog public API", () => {
   let fetchSpy: ReturnType<typeof vi.fn>;
@@ -29,5 +29,30 @@ describe("init + auralog public API", () => {
 
   it("throws if auralog is used before init", () => {
     expect(() => auralog.info("test")).toThrow();
+  });
+
+  it("getTraceId returns a UUID after init", () => {
+    fetchSpy = vi.fn().mockResolvedValue({ ok: true });
+    init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false }, fetchSpy);
+    const traceId = getTraceId();
+    expect(typeof traceId).toBe("string");
+    expect(traceId.length).toBeGreaterThan(0);
+  });
+
+  it("setTraceId changes the trace ID", () => {
+    fetchSpy = vi.fn().mockResolvedValue({ ok: true });
+    init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false }, fetchSpy);
+    setTraceId("custom");
+    expect(getTraceId()).toBe("custom");
+  });
+
+  it("getTraceId throws before init", () => {
+    expect(() => getTraceId()).toThrow();
+  });
+
+  it("traceId from config is used", () => {
+    fetchSpy = vi.fn().mockResolvedValue({ ok: true });
+    init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false, traceId: "my-trace" }, fetchSpy);
+    expect(getTraceId()).toBe("my-trace");
   });
 });

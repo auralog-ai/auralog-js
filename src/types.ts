@@ -17,6 +17,7 @@ export interface AuralogConfig {
   captureErrors?: boolean;
   flushInterval?: number;
   endpoint?: string;
+  traceId?: string;
 }
 
 export interface InternalLogEntry {
@@ -26,4 +27,5 @@ export interface InternalLogEntry {
   stackTrace?: string;
   environment?: string;
   timestamp: string;
+  traceId?: string;
 }

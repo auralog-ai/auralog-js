@@ -21,7 +21,7 @@ export function init(
     fetchFn,
   });
 
-  logger = new Logger(config.environment, (entry) => { transport!.send(entry); });
+  logger = new Logger(config.environment, (entry) => { transport!.send(entry); }, config.traceId);
 
   if (config.captureConsole) {
     startConsoleCapture((entry) => transport!.send(entry), config.environment);
@@ -48,6 +48,14 @@ export async function shutdown(): Promise<void> {
 function assertInitialized(): Logger {
   if (!logger) throw new Error("auralog.init() must be called before using the logger");
   return logger;
+}
+
+export function getTraceId(): string {
+  return assertInitialized().getTraceId();
+}
+
+export function setTraceId(id: string): void {
+  assertInitialized().setTraceId(id);
 }
 
 export const auralog = {
