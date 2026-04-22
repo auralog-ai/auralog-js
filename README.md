@@ -40,6 +40,7 @@ auralog.error("payment failed", { orderId: "abc" });
 | `flushInterval` | `number` | `5000` | Ms between batched flushes |
 | `captureConsole` | `boolean` | `false` | Forward `console.*` calls |
 | `captureErrors` | `boolean` | `true` | Capture uncaught errors and unhandled rejections |
+| `traceId` | `string` | _auto-generated_ | Custom trace ID for distributed tracing |
 
 ## Graceful shutdown
 
