@@ -41,6 +41,38 @@ auralog.error("payment failed", { orderId: "abc" });
 | `captureConsole` | `boolean` | `false` | Forward `console.*` calls |
 | `captureErrors` | `boolean` | `true` | Capture uncaught errors and unhandled rejections |
 | `traceId` | `string` | _auto-generated_ | Custom trace ID for distributed tracing |
+| `globalMetadata` | `Record<string, unknown>` or `() => Record<string, unknown>` | `undefined` | Baseline metadata merged into every log entry — including `captureConsole` and `captureErrors` entries. Per-call metadata wins on key collision (shallow merge). |
+
+## Attaching session-scoped fields to every log
+
+Use `globalMetadata` to attach things like `user_id`, org id, or feature-flag snapshots to every log Auralog emits — including `console.*` captures and uncaught errors. The supplier form is the canonical recipe because it's evaluated at log time, so it always sees the current host state:
+
+```ts
+import { auralog, init } from "auralog-sdk";
+
+init({
+  apiKey: process.env.AURALOG_API_KEY!,
+  environment: "production",
+  captureConsole: true,
+  captureErrors: true,
+  globalMetadata: () => ({
+    user_id: currentUser?.id,
+    org_id: currentUser?.orgId,
+  }),
+});
+
+auralog.info("checkout started");
+// metadata: { user_id: "...", org_id: "..." }
+
+auralog.info("admin impersonating", { user_id: "impersonated-id" });
+// per-call wins: { user_id: "impersonated-id", org_id: "..." }
+```
+
+A few caveats:
+
+- **Sync only.** The supplier must return synchronously. If it returns a `Promise` (or any thenable), Auralog drops `globalMetadata` for that entry, warns once, and ships the entry without it. Cache async state on the sync side (e.g. in a context-local) before reading it here.
+- **Keep it cheap.** The supplier runs on every log emission. Avoid I/O or expensive computation.
+- **If it throws or produces a non-serializable value**, the entry is still delivered — just without `globalMetadata`. Auralog warns once per logger instance and stays silent thereafter.
 
 ## Graceful shutdown
 

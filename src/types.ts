@@ -10,6 +10,17 @@ export function isAtOrAboveLevel(level: LogLevel, threshold: LogLevel): boolean 
 
 export const DEFAULT_FLUSH_INTERVAL_MS = 5000;
 
+/**
+ * Static map or sync supplier. The supplier form is invoked on every log
+ * emission so values like `currentUser?.id` reflect host state at log time.
+ *
+ * Async suppliers (returning a thenable) are not supported — they would add
+ * await latency to every log emit. See spec 2026-04-25-global-metadata.md.
+ */
+export type GlobalMetadata =
+  | Record<string, unknown>
+  | (() => Record<string, unknown>);
+
 export interface AuralogConfig {
   apiKey: string;
   environment?: string;
@@ -18,6 +29,13 @@ export interface AuralogConfig {
   flushInterval?: number;
   endpoint?: string;
   traceId?: string;
+  /**
+   * Baseline metadata merged into every log entry (direct API, captureConsole,
+   * captureErrors). Per-call metadata wins on key collision (shallow merge).
+   *
+   * The supplier form is invoked on every emission — keep it O(1) cheap.
+   */
+  globalMetadata?: GlobalMetadata;
 }
 
 export interface InternalLogEntry {

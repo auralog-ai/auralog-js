@@ -1,9 +1,10 @@
 import { DEFAULT_FLUSH_INTERVAL_MS } from "./types.js";
 import { Logger } from "./logger.js";
+import { MetadataMerger } from "./metadata.js";
 import { Transport } from "./transport.js";
 import { startConsoleCapture, stopConsoleCapture } from "./console-capture.js";
 import { startErrorCapture, stopErrorCapture } from "./error-capture.js";
-import type { AuralogConfig } from "./types.js";
+import type { AuralogConfig, InternalLogEntry } from "./types.js";
 
 let logger: Logger | null = null;
 let transport: Transport | null = null;
@@ -21,14 +22,26 @@ export function init(
     fetchFn,
   });
 
-  logger = new Logger(config.environment, (entry) => { transport!.send(entry); }, config.traceId);
+  const merger = new MetadataMerger(config.globalMetadata);
+  const activeLogger = new Logger(
+    config.environment,
+    (entry) => { transport!.send(entry); },
+    merger,
+    config.traceId,
+  );
+  logger = activeLogger;
+
+  // Capture paths route through logger.buildEntry so they pick up the same
+  // metadata merge (globalMetadata + per-call) used by the direct API.
+  const build = activeLogger.buildEntry.bind(activeLogger);
+  const emit = (entry: InternalLogEntry) => transport!.send(entry);
 
   if (config.captureConsole) {
-    startConsoleCapture((entry) => transport!.send(entry), config.environment);
+    startConsoleCapture(emit, build);
   }
 
   if (config.captureErrors !== false) {
-    startErrorCapture((entry) => transport!.send(entry), config.environment);
+    startErrorCapture(emit, build);
   }
 
   return { flush: () => transport!.flush() };
@@ -66,4 +79,4 @@ export const auralog = {
   fatal(message: string, metadata?: Record<string, unknown>, stackTrace?: string) { assertInitialized().fatal(message, metadata, stackTrace); },
 };
 
-export type { AuralogConfig, LogLevel } from "./types.js";
+export type { AuralogConfig, GlobalMetadata, LogLevel } from "./types.js";

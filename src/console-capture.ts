@@ -1,7 +1,18 @@
-import type { LogLevel } from "./types.js";
-import type { InternalLogEntry } from "./types.js";
+import type { LogLevel, InternalLogEntry } from "./types.js";
 
-type LogHandler = (entry: InternalLogEntry) => void;
+/**
+ * Capture paths receive a builder rather than a raw handler so that the
+ * `globalMetadata` merge applied to direct API calls also applies here —
+ * see Logger.buildEntry. Capture paths previously emitted entries with no
+ * `metadata` field at all; routing through the builder fixes that.
+ */
+export type CaptureEntryBuilder = (
+  partial: Omit<InternalLogEntry, "timestamp" | "environment" | "traceId" | "metadata"> & {
+    metadata?: Record<string, unknown>;
+  },
+) => InternalLogEntry;
+
+type Emit = (entry: InternalLogEntry) => void;
 
 const METHOD_TO_LEVEL: Record<string, LogLevel> = {
   log: "info",
@@ -11,14 +22,15 @@ const METHOD_TO_LEVEL: Record<string, LogLevel> = {
 
 let originals: Record<string, (...args: unknown[]) => void> | null = null;
 
-export function startConsoleCapture(handler: LogHandler, environment?: string): void {
+export function startConsoleCapture(emit: Emit, build: CaptureEntryBuilder): void {
   if (originals) return;
   originals = { log: console.log, warn: console.warn, error: console.error };
 
   for (const [method, level] of Object.entries(METHOD_TO_LEVEL)) {
     const original = originals[method];
     (console as unknown as Record<string, (...args: unknown[]) => void>)[method] = (...args: unknown[]) => {
-      handler({ level, message: args.map(String).join(" "), environment, timestamp: new Date().toISOString() });
+      const message = args.map(String).join(" ");
+      emit(build({ level, message }));
       original.apply(console, args);
     };
   }

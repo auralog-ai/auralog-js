@@ -1,6 +1,7 @@
 import type { InternalLogEntry } from "./types.js";
+import type { CaptureEntryBuilder } from "./console-capture.js";
 
-type LogHandler = (entry: InternalLogEntry) => void;
+type Emit = (entry: InternalLogEntry) => void;
 
 const isBrowser = typeof window !== "undefined";
 const isNode = typeof process !== "undefined" && typeof process.on === "function";
@@ -10,45 +11,45 @@ let rejectionHandler: ((reason: unknown) => void) | null = null;
 let browserErrorHandler: ((event: ErrorEvent) => void) | null = null;
 let browserRejectionHandler: ((event: PromiseRejectionEvent) => void) | null = null;
 
-export function startErrorCapture(handler: LogHandler, environment?: string): void {
+export function startErrorCapture(emit: Emit, build: CaptureEntryBuilder): void {
   if (uncaughtHandler || browserErrorHandler) return;
 
   if (isNode) {
-    uncaughtHandler = (err: Error) => {
-      handler({ level: "fatal", message: err.message, stackTrace: err.stack, environment, timestamp: new Date().toISOString() });
+    uncaughtHandler = (error: Error) => {
+      emit(build({ level: "fatal", message: error.message, stackTrace: error.stack }));
     };
     rejectionHandler = (reason: unknown) => {
       const isError = reason instanceof Error;
-      handler({
-        level: "error",
-        message: isError ? reason.message : String(reason),
-        stackTrace: isError ? reason.stack : undefined,
-        environment,
-        timestamp: new Date().toISOString(),
-      });
+      emit(
+        build({
+          level: "error",
+          message: isError ? reason.message : String(reason),
+          stackTrace: isError ? reason.stack : undefined,
+        }),
+      );
     };
     process.on("uncaughtException", uncaughtHandler);
     process.on("unhandledRejection", rejectionHandler);
   } else if (isBrowser) {
     browserErrorHandler = (event: ErrorEvent) => {
-      handler({
-        level: "fatal",
-        message: event.message,
-        stackTrace: event.error?.stack,
-        environment,
-        timestamp: new Date().toISOString(),
-      });
+      emit(
+        build({
+          level: "fatal",
+          message: event.message,
+          stackTrace: event.error?.stack,
+        }),
+      );
     };
     browserRejectionHandler = (event: PromiseRejectionEvent) => {
       const reason = event.reason;
       const isError = reason instanceof Error;
-      handler({
-        level: "error",
-        message: isError ? reason.message : String(reason),
-        stackTrace: isError ? reason.stack : undefined,
-        environment,
-        timestamp: new Date().toISOString(),
-      });
+      emit(
+        build({
+          level: "error",
+          message: isError ? reason.message : String(reason),
+          stackTrace: isError ? reason.stack : undefined,
+        }),
+      );
     };
     window.addEventListener("error", browserErrorHandler);
     window.addEventListener("unhandledrejection", browserRejectionHandler);
