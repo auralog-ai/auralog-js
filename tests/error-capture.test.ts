@@ -1,6 +1,15 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { startErrorCapture, stopErrorCapture } from "../src/error-capture.js";
+import type { CaptureEntryBuilder } from "../src/console-capture.js";
 import type { InternalLogEntry } from "../src/types.js";
+
+const passthroughBuild: CaptureEntryBuilder = (partial) => ({
+  level: partial.level,
+  message: partial.message,
+  stackTrace: partial.stackTrace,
+  metadata: partial.metadata,
+  timestamp: new Date().toISOString(),
+});
 
 describe("Error Capture (Node.js)", () => {
   let captured: InternalLogEntry[];
@@ -8,7 +17,7 @@ describe("Error Capture (Node.js)", () => {
   afterEach(() => { stopErrorCapture(); });
 
   it("captures uncaughtException as fatal", () => {
-    startErrorCapture((entry) => captured.push(entry));
+    startErrorCapture((entry) => captured.push(entry), passthroughBuild);
     process.emit("uncaughtException", new Error("test crash"));
     expect(captured).toHaveLength(1);
     expect(captured[0].level).toBe("fatal");
@@ -17,7 +26,7 @@ describe("Error Capture (Node.js)", () => {
   });
 
   it("captures unhandledRejection as error", () => {
-    startErrorCapture((entry) => captured.push(entry));
+    startErrorCapture((entry) => captured.push(entry), passthroughBuild);
     process.emit("unhandledRejection", new Error("unhandled promise"), Promise.resolve());
     expect(captured).toHaveLength(1);
     expect(captured[0].level).toBe("error");
@@ -25,7 +34,7 @@ describe("Error Capture (Node.js)", () => {
   });
 
   it("handles non-Error rejections", () => {
-    startErrorCapture((entry) => captured.push(entry));
+    startErrorCapture((entry) => captured.push(entry), passthroughBuild);
     process.emit("unhandledRejection", "string rejection", Promise.resolve());
     expect(captured).toHaveLength(1);
     expect(captured[0].message).toBe("string rejection");
@@ -33,7 +42,7 @@ describe("Error Capture (Node.js)", () => {
   });
 
   it("stops capturing after stopErrorCapture", () => {
-    startErrorCapture((entry) => captured.push(entry));
+    startErrorCapture((entry) => captured.push(entry), passthroughBuild);
     stopErrorCapture();
     // Add a no-op listener so Node doesn't re-throw the emitted exception
     const noop = () => {};

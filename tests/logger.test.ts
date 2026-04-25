@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Logger } from "../src/logger.js";
+import { MetadataMerger } from "../src/metadata.js";
 import type { InternalLogEntry } from "../src/types.js";
 
 describe("Logger", () => {
@@ -8,7 +9,7 @@ describe("Logger", () => {
 
   beforeEach(() => {
     logs = [];
-    logger = new Logger("test-env", (entry) => { logs.push(entry); });
+    logger = new Logger("test-env", (entry) => { logs.push(entry); }, new MetadataMerger(undefined));
   });
 
   it("logs at each level with correct level field", () => {
@@ -45,7 +46,7 @@ describe("Logger", () => {
   });
 
   it("uses provided trace ID", () => {
-    const tracedLogger = new Logger("test-env", (entry) => { logs.push(entry); }, "my-trace-123");
+    const tracedLogger = new Logger("test-env", (entry) => { logs.push(entry); }, new MetadataMerger(undefined), "my-trace-123");
     tracedLogger.info("test");
     expect(logs[0].traceId).toBe("my-trace-123");
   });
