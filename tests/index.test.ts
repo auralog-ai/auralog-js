@@ -55,4 +55,52 @@ describe("init + auralog public API", () => {
     init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false, traceId: "my-trace" }, fetchSpy);
     expect(getTraceId()).toBe("my-trace");
   });
+
+  describe("endpoint validation", () => {
+    it("rejects http:// endpoints by default", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          { apiKey: "aura_test", endpoint: "http://ingest.example.com", captureConsole: false, captureErrors: false },
+          fetchFn,
+        ),
+      ).toThrow(/non-https endpoint/);
+    });
+
+    it("rejects malformed endpoint URLs", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          { apiKey: "aura_test", endpoint: "not a url", captureConsole: false, captureErrors: false },
+          fetchFn,
+        ),
+      ).toThrow(/invalid endpoint/);
+    });
+
+    it("accepts http:// when allowInsecureEndpoint is true (local dev)", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          {
+            apiKey: "aura_test",
+            endpoint: "http://localhost:8080",
+            allowInsecureEndpoint: true,
+            captureConsole: false,
+            captureErrors: false,
+          },
+          fetchFn,
+        ),
+      ).not.toThrow();
+    });
+
+    it("accepts the default https endpoint with no override", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          { apiKey: "aura_test", captureConsole: false, captureErrors: false },
+          fetchFn,
+        ),
+      ).not.toThrow();
+    });
+  });
 });

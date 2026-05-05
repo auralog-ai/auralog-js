@@ -9,6 +9,7 @@ export function isAtOrAboveLevel(level: LogLevel, threshold: LogLevel): boolean 
 }
 
 export const DEFAULT_FLUSH_INTERVAL_MS = 5000;
+export const DEFAULT_MAX_QUEUE_SIZE = 1000;
 
 /**
  * Static map or sync supplier. The supplier form is invoked on every log
@@ -28,6 +29,18 @@ export interface AuralogConfig {
   captureErrors?: boolean;
   flushInterval?: number;
   endpoint?: string;
+  /**
+   * Maximum number of buffered log entries before the transport drops the
+   * oldest entries. Prevents unbounded memory growth when the ingest endpoint
+   * is unreachable. Defaults to 1000.
+   */
+  maxQueueSize?: number;
+  /**
+   * Allow `endpoint` to use plaintext `http://`. Off by default — a misconfigured
+   * `AURALOG_ENDPOINT=http://...` would otherwise silently downgrade every POST
+   * (including the API key in the body) to plaintext. Opt in for local dev.
+   */
+  allowInsecureEndpoint?: boolean;
   traceId?: string;
   /**
    * Baseline metadata merged into every log entry (direct API, captureConsole,

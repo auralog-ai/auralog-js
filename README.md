@@ -36,8 +36,10 @@ auralog.error("payment failed", { orderId: "abc" });
 |---|---|---|---|
 | `apiKey` | `string` | _required_ | Your Auralog project API key |
 | `environment` | `string` | _required_ | e.g. `"production"`, `"staging"`, `"dev"` |
-| `endpoint` | `string` | `https://ingest.auralog.ai` | Ingest endpoint override |
+| `endpoint` | `string` | `https://ingest.auralog.ai` | Ingest endpoint override. Must be `https://` unless `allowInsecureEndpoint` is set. |
+| `allowInsecureEndpoint` | `boolean` | `false` | Permit `http://` endpoints (e.g. `http://localhost:8080` for local dev). Off by default — a plaintext endpoint would leak the API key on the wire. |
 | `flushInterval` | `number` | `5000` | Ms between batched flushes |
+| `maxQueueSize` | `number` | `1000` | Max buffered log entries before the SDK drops the oldest. Bounds memory if the ingest endpoint is unreachable. |
 | `captureConsole` | `boolean` | `false` | Forward `console.*` calls |
 | `captureErrors` | `boolean` | `true` | Capture uncaught errors and unhandled rejections |
 | `traceId` | `string` | _auto-generated_ | Custom trace ID for distributed tracing |

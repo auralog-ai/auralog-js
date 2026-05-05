@@ -5,6 +5,7 @@ interface TransportConfig {
   apiKey: string;
   endpoint: string;
   flushInterval: number;
+  maxQueueSize: number;
   fetchFn?: typeof fetch;
 }
 
@@ -12,6 +13,7 @@ export class Transport {
   private apiKey: string;
   private endpoint: string;
   private flushInterval: number;
+  private maxQueueSize: number;
   private buffer: InternalLogEntry[] = [];
   private timer: ReturnType<typeof setTimeout> | null = null;
   private fetchFn: typeof fetch;
@@ -21,6 +23,7 @@ export class Transport {
     this.apiKey = config.apiKey;
     this.endpoint = config.endpoint;
     this.flushInterval = config.flushInterval;
+    this.maxQueueSize = config.maxQueueSize;
     this.fetchFn = config.fetchFn ?? fetch.bind(globalThis);
     this.scheduleNext();
   }
@@ -37,6 +40,11 @@ export class Transport {
   send(entry: InternalLogEntry): void {
     if (isAtOrAboveLevel(entry.level, "error")) { void this.sendSingle(entry); return; }
     this.buffer.push(entry);
+    // Drop oldest entries if we'd exceed the cap. An unreachable ingest endpoint
+    // must not be allowed to OOM the host application.
+    if (this.buffer.length > this.maxQueueSize) {
+      this.buffer.splice(0, this.buffer.length - this.maxQueueSize);
+    }
   }
 
   async flush(): Promise<void> {
@@ -47,6 +55,11 @@ export class Transport {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projectApiKey: this.apiKey, logs }),
+        // Refuse to follow redirects. fetch's default `redirect: "follow"`
+        // re-sends the request body (which contains projectApiKey) to whatever
+        // host the Location header points at — a hostile or compromised
+        // intermediate, or a server-side bug, would exfiltrate keys fleet-wide.
+        redirect: "error",
       });
     } catch (err) {
       // Swallow so a single network failure does not kill the reschedule loop
@@ -66,6 +79,8 @@ export class Transport {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projectApiKey: this.apiKey, log: entry }),
+        // See flush() for rationale — never replay the body to a redirect target.
+        redirect: "error",
       });
     } catch (err) {
       // send() dispatches this as `void sendSingle(...)`, so an uncaught reject
