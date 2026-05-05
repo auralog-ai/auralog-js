@@ -55,4 +55,86 @@ describe("init + auralog public API", () => {
     init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false, traceId: "my-trace" }, fetchSpy);
     expect(getTraceId()).toBe("my-trace");
   });
+
+  describe("endpoint validation", () => {
+    it("rejects http:// endpoints by default", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          { apiKey: "aura_test", endpoint: "http://ingest.example.com", captureConsole: false, captureErrors: false },
+          fetchFn,
+        ),
+      ).toThrow(/non-https endpoint/);
+    });
+
+    it("rejects malformed endpoint URLs", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          { apiKey: "aura_test", endpoint: "not a url", captureConsole: false, captureErrors: false },
+          fetchFn,
+        ),
+      ).toThrow(/invalid endpoint/);
+    });
+
+    it("accepts http:// when allowInsecureEndpoint is true (local dev)", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          {
+            apiKey: "aura_test",
+            endpoint: "http://localhost:8080",
+            allowInsecureEndpoint: true,
+            captureConsole: false,
+            captureErrors: false,
+          },
+          fetchFn,
+        ),
+      ).not.toThrow();
+    });
+
+    it("accepts the default https endpoint with no override", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() =>
+        init(
+          { apiKey: "aura_test", captureConsole: false, captureErrors: false },
+          fetchFn,
+        ),
+      ).not.toThrow();
+    });
+  });
+
+  describe("numeric config validation", () => {
+    const baseConfig = {
+      apiKey: "aura_test",
+      endpoint: "https://test.auralog.dev",
+      captureConsole: false,
+      captureErrors: false,
+    };
+
+    it.each([0, -1, Number.NaN, 1.5])(
+      "rejects maxQueueSize=%s (silent disablement footgun)",
+      (value) => {
+        const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+        expect(() =>
+          init({ ...baseConfig, maxQueueSize: value as number }, fetchFn),
+        ).toThrow(/maxQueueSize/);
+      },
+    );
+
+    it.each([0, -1, Number.NaN])(
+      "rejects flushInterval=%s",
+      (value) => {
+        const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+        expect(() =>
+          init({ ...baseConfig, flushInterval: value as number }, fetchFn),
+        ).toThrow(/flushInterval/);
+      },
+    );
+
+    it("accepts undefined (default applies)", () => {
+      const fetchFn = vi.fn().mockResolvedValue({ ok: true });
+      expect(() => init(baseConfig, fetchFn)).not.toThrow();
+    });
+  });
 });

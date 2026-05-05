@@ -1,4 +1,4 @@
-import { DEFAULT_FLUSH_INTERVAL_MS } from "./types.js";
+import { DEFAULT_FLUSH_INTERVAL_MS, DEFAULT_MAX_QUEUE_SIZE } from "./types.js";
 import { Logger } from "./logger.js";
 import { MetadataMerger } from "./metadata.js";
 import { Transport } from "./transport.js";
@@ -11,14 +11,51 @@ let transport: Transport | null = null;
 
 const DEFAULT_ENDPOINT = "https://ingest.auralog.ai";
 
+function validateEndpoint(endpoint: string, allowInsecure: boolean): void {
+  let parsed: URL;
+  try {
+    parsed = new URL(endpoint);
+  } catch {
+    throw new Error(
+      `auralog: invalid endpoint "${endpoint}" — must be a valid URL`,
+    );
+  }
+  if (parsed.protocol === "https:") return;
+  if (parsed.protocol === "http:" && allowInsecure) return;
+  throw new Error(
+    `auralog: refusing to use non-https endpoint "${endpoint}". ` +
+      `The API key is sent in the request body, so plaintext http:// would ` +
+      `leak it on the wire. Set allowInsecureEndpoint: true to opt in ` +
+      `(intended for local development only).`,
+  );
+}
+
+function validatePositiveInteger(value: unknown, name: string): void {
+  // `??` only catches null/undefined, so a caller passing `0`, `-1`, or `NaN`
+  // here would silently produce broken behavior (e.g. maxQueueSize: 0 drains
+  // the buffer on every send). Validate explicitly.
+  if (value === undefined) return;
+  if (typeof value !== "number" || !Number.isFinite(value) || !Number.isInteger(value) || value <= 0) {
+    throw new Error(
+      `auralog: ${name} must be a positive integer (got ${String(value)})`,
+    );
+  }
+}
+
 export function init(
   config: AuralogConfig,
   fetchFn?: typeof fetch
 ): { flush: () => Promise<void> } {
+  const endpoint = config.endpoint ?? DEFAULT_ENDPOINT;
+  validateEndpoint(endpoint, config.allowInsecureEndpoint === true);
+  validatePositiveInteger(config.maxQueueSize, "maxQueueSize");
+  validatePositiveInteger(config.flushInterval, "flushInterval");
+
   transport = new Transport({
     apiKey: config.apiKey,
-    endpoint: config.endpoint ?? DEFAULT_ENDPOINT,
+    endpoint,
     flushInterval: config.flushInterval ?? DEFAULT_FLUSH_INTERVAL_MS,
+    maxQueueSize: config.maxQueueSize ?? DEFAULT_MAX_QUEUE_SIZE,
     fetchFn,
   });
 
