@@ -30,12 +30,26 @@ function validateEndpoint(endpoint: string, allowInsecure: boolean): void {
   );
 }
 
+function validatePositiveInteger(value: unknown, name: string): void {
+  // `??` only catches null/undefined, so a caller passing `0`, `-1`, or `NaN`
+  // here would silently produce broken behavior (e.g. maxQueueSize: 0 drains
+  // the buffer on every send). Validate explicitly.
+  if (value === undefined) return;
+  if (typeof value !== "number" || !Number.isFinite(value) || !Number.isInteger(value) || value <= 0) {
+    throw new Error(
+      `auralog: ${name} must be a positive integer (got ${String(value)})`,
+    );
+  }
+}
+
 export function init(
   config: AuralogConfig,
   fetchFn?: typeof fetch
 ): { flush: () => Promise<void> } {
   const endpoint = config.endpoint ?? DEFAULT_ENDPOINT;
   validateEndpoint(endpoint, config.allowInsecureEndpoint === true);
+  validatePositiveInteger(config.maxQueueSize, "maxQueueSize");
+  validatePositiveInteger(config.flushInterval, "flushInterval");
 
   transport = new Transport({
     apiKey: config.apiKey,

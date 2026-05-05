@@ -115,6 +115,33 @@ describe("Transport", () => {
       expect(fetchSpy).toHaveBeenCalledTimes(1);
       expect(fetchSpy.mock.calls[0][1].redirect).toBe("error");
     });
+
+    // Behavioral test: replace the fetch spy with one that rejects unless
+    // redirect: "error" is set. If a future refactor drops the option, this
+    // test fails because the SDK would call fetch with the default
+    // redirect: "follow" and the strict spy refuses to run.
+    it("refuses to invoke a fetch that would silently follow redirects", async () => {
+      const strictFetch = vi.fn(async (_url: any, init: any) => {
+        if (init.redirect !== "error") {
+          throw new Error(`SDK invoked fetch with redirect=${init.redirect}; expected "error"`);
+        }
+        return { ok: true } as Response;
+      });
+      const t2 = new Transport({
+        apiKey: "k", endpoint: "https://x", flushInterval: 5000, maxQueueSize: 100, fetchFn: strictFetch as any,
+      });
+      // Batch path
+      t2.send(makeEntry("info", "one"));
+      await t2.flush();
+      // Single-error fast path
+      t2.send(makeEntry("error", "boom"));
+      await Promise.resolve();
+      // 1 batch fetch + 1 single-error fetch. The strict spy throws if
+      // either call had `redirect !== "error"`, so reaching `.toHaveBeenCalledTimes(2)`
+      // proves both code paths set the option correctly.
+      expect(strictFetch).toHaveBeenCalledTimes(2);
+      t2.shutdown();
+    });
   });
 
   describe("queue cap (maxQueueSize)", () => {
