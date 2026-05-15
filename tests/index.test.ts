@@ -1,25 +1,25 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { init, auralog, shutdown, getTraceId, setTraceId } from "../src/index.js";
+import { init, auralogs, shutdown, getTraceId, setTraceId } from "../src/index.js";
 
-describe("init + auralog public API", () => {
+describe("init + auralogs public API", () => {
   let fetchSpy: ReturnType<typeof vi.fn>;
 
   afterEach(() => { shutdown(); vi.useRealTimers(); });
 
   it("exposes log methods after init", () => {
     fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false }, fetchSpy);
-    expect(typeof auralog.info).toBe("function");
-    expect(typeof auralog.error).toBe("function");
-    expect(typeof auralog.debug).toBe("function");
-    expect(typeof auralog.warn).toBe("function");
-    expect(typeof auralog.fatal).toBe("function");
+    init({ apiKey: "aura_test", endpoint: "https://test.auralogs.dev", captureConsole: false, captureErrors: false }, fetchSpy);
+    expect(typeof auralogs.info).toBe("function");
+    expect(typeof auralogs.error).toBe("function");
+    expect(typeof auralogs.debug).toBe("function");
+    expect(typeof auralogs.warn).toBe("function");
+    expect(typeof auralogs.fatal).toBe("function");
   });
 
   it("sends logs through transport on flush", async () => {
     fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    const { flush } = init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false }, fetchSpy);
-    auralog.info("hello", { key: "val" });
+    const { flush } = init({ apiKey: "aura_test", endpoint: "https://test.auralogs.dev", captureConsole: false, captureErrors: false }, fetchSpy);
+    auralogs.info("hello", { key: "val" });
     await flush();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
@@ -27,13 +27,13 @@ describe("init + auralog public API", () => {
     expect(body.projectApiKey).toBe("aura_test");
   });
 
-  it("throws if auralog is used before init", () => {
-    expect(() => auralog.info("test")).toThrow();
+  it("throws if auralogs is used before init", () => {
+    expect(() => auralogs.info("test")).toThrow();
   });
 
   it("getTraceId returns a UUID after init", () => {
     fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false }, fetchSpy);
+    init({ apiKey: "aura_test", endpoint: "https://test.auralogs.dev", captureConsole: false, captureErrors: false }, fetchSpy);
     const traceId = getTraceId();
     expect(typeof traceId).toBe("string");
     expect(traceId.length).toBeGreaterThan(0);
@@ -41,7 +41,7 @@ describe("init + auralog public API", () => {
 
   it("setTraceId changes the trace ID", () => {
     fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false }, fetchSpy);
+    init({ apiKey: "aura_test", endpoint: "https://test.auralogs.dev", captureConsole: false, captureErrors: false }, fetchSpy);
     setTraceId("custom");
     expect(getTraceId()).toBe("custom");
   });
@@ -52,7 +52,7 @@ describe("init + auralog public API", () => {
 
   it("traceId from config is used", () => {
     fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    init({ apiKey: "aura_test", endpoint: "https://test.auralog.dev", captureConsole: false, captureErrors: false, traceId: "my-trace" }, fetchSpy);
+    init({ apiKey: "aura_test", endpoint: "https://test.auralogs.dev", captureConsole: false, captureErrors: false, traceId: "my-trace" }, fetchSpy);
     expect(getTraceId()).toBe("my-trace");
   });
 
@@ -107,7 +107,7 @@ describe("init + auralog public API", () => {
   describe("numeric config validation", () => {
     const baseConfig = {
       apiKey: "aura_test",
-      endpoint: "https://test.auralog.dev",
+      endpoint: "https://test.auralogs.dev",
       captureConsole: false,
       captureErrors: false,
     };

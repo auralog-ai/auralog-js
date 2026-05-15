@@ -43,7 +43,7 @@ export class MetadataMerger {
 
     if (!isJsonSerializable(merged)) {
       this.warnOnce(
-        "auralog: globalMetadata produced a non-JSON-serializable value; emitting entry without it",
+        "auralogs: globalMetadata produced a non-JSON-serializable value; emitting entry without it",
       );
       return perCall && Object.keys(perCall).length > 0 ? perCall : undefined;
     }
@@ -63,20 +63,20 @@ export class MetadataMerger {
     try {
       value = this.global();
     } catch (error) {
-      this.warnOnce("auralog: globalMetadata supplier threw; emitting entry without it", error);
+      this.warnOnce("auralogs: globalMetadata supplier threw; emitting entry without it", error);
       return undefined;
     }
 
     if (isThenable(value)) {
       this.warnOnce(
-        "auralog: globalMetadata supplier returned a thenable; async suppliers are not supported. Emitting entry without it.",
+        "auralogs: globalMetadata supplier returned a thenable; async suppliers are not supported. Emitting entry without it.",
       );
       return undefined;
     }
 
     if (value === null || typeof value !== "object") {
       this.warnOnce(
-        "auralog: globalMetadata supplier returned a non-object; emitting entry without it",
+        "auralogs: globalMetadata supplier returned a non-object; emitting entry without it",
       );
       return undefined;
     }

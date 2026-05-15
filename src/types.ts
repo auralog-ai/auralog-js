@@ -22,7 +22,7 @@ export type GlobalMetadata =
   | Record<string, unknown>
   | (() => Record<string, unknown>);
 
-export interface AuralogConfig {
+export interface AuralogsConfig {
   apiKey: string;
   environment?: string;
   captureConsole?: boolean;

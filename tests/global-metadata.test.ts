@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { init, auralog, shutdown } from "../src/index.js";
+import { init, auralogs, shutdown } from "../src/index.js";
 
 /**
  * Covers the eight required cases from spec 2026-04-25-global-metadata.md.
@@ -41,8 +41,8 @@ describe("globalMetadata", () => {
       fetchSpy,
     );
 
-    auralog.info("first");
-    auralog.info("second");
+    auralogs.info("first");
+    auralogs.info("second");
     await flush();
 
     const logs = lastSentLogs();
@@ -64,9 +64,9 @@ describe("globalMetadata", () => {
       fetchSpy,
     );
 
-    auralog.info("a");
-    auralog.info("b");
-    auralog.info("c");
+    auralogs.info("a");
+    auralogs.info("b");
+    auralogs.info("c");
     await flush();
 
     expect(supplier).toHaveBeenCalledTimes(3);
@@ -88,9 +88,9 @@ describe("globalMetadata", () => {
       fetchSpy,
     );
 
-    auralog.info("first", { request_id: "r-1" });
-    auralog.info("second", { request_id: "r-2" });
-    auralog.info("third");
+    auralogs.info("first", { request_id: "r-1" });
+    auralogs.info("second", { request_id: "r-2" });
+    auralogs.info("third");
     await flush();
 
     const logs = lastSentLogs();
@@ -118,8 +118,8 @@ describe("globalMetadata", () => {
       fetchSpy,
     );
 
-    auralog.info("hello");
-    auralog.info("world");
+    auralogs.info("hello");
+    auralogs.info("world");
     await flush();
 
     const logs = lastSentLogs();
@@ -143,7 +143,7 @@ describe("globalMetadata", () => {
       fetchSpy,
     );
 
-    auralog.info("override", { user_id: "specific-user", request_id: "r-9" });
+    auralogs.info("override", { user_id: "specific-user", request_id: "r-9" });
     await flush();
 
     const logs = lastSentLogs();
@@ -214,8 +214,8 @@ describe("globalMetadata", () => {
       fetchSpy,
     );
 
-    auralog.info("survives", { request_id: "r-1" });
-    auralog.info("also survives");
+    auralogs.info("survives", { request_id: "r-1" });
+    auralogs.info("also survives");
     await flush();
 
     const logs = lastSentLogs();
@@ -235,7 +235,7 @@ describe("globalMetadata", () => {
       fetchSpy,
     );
 
-    auralog.info("plain");
+    auralogs.info("plain");
     await flush();
 
     const logs = lastSentLogs();

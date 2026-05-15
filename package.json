@@ -1,6 +1,6 @@
 {
-  "name": "auralog-sdk",
-  "version": "0.2.0",
+  "name": "auralogs-sdk",
+  "version": "1.0.0",
   "description": "Agentic logging and application awareness. Simplified.",
   "type": "module",
   "main": "./dist/index.js",
@@ -27,11 +27,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/auralog-ai/auralog-js.git"
+    "url": "https://github.com/auralogs-ai/auralogs-js.git"
   },
-  "homepage": "https://auralog.ai",
+  "homepage": "https://auralogs.ai",
   "bugs": {
-    "url": "https://github.com/auralog-ai/auralog-js/issues"
+    "url": "https://github.com/auralogs-ai/auralogs-js/issues"
   },
   "devDependencies": {
     "@types/node": "^25.5.2",

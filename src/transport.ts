@@ -64,7 +64,7 @@ export class Transport {
     } catch (err) {
       // Swallow so a single network failure does not kill the reschedule loop
       // in scheduleNext() or surface as an unhandled rejection in the host app.
-      console.warn("auralog: failed to send logs", err);
+      console.warn("auralogs: failed to send logs", err);
     }
   }
 
@@ -85,7 +85,7 @@ export class Transport {
     } catch (err) {
       // send() dispatches this as `void sendSingle(...)`, so an uncaught reject
       // would become an unhandled promise rejection in the host app.
-      console.warn("auralog: failed to send log", err);
+      console.warn("auralogs: failed to send log", err);
     }
   }
 }

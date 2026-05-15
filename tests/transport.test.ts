@@ -13,7 +13,7 @@ describe("Transport", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     fetchSpy = vi.fn().mockResolvedValue({ ok: true });
-    transport = new Transport({ apiKey: "aura_test", endpoint: "https://ingest.auralog.ai", flushInterval: 5000, maxQueueSize: 1000, fetchFn: fetchSpy });
+    transport = new Transport({ apiKey: "aura_test", endpoint: "https://ingest.auralogs.ai", flushInterval: 5000, maxQueueSize: 1000, fetchFn: fetchSpy });
   });
 
   afterEach(() => { transport.shutdown(); vi.useRealTimers(); });
@@ -33,14 +33,14 @@ describe("Transport", () => {
     transport.send(makeEntry("error", "boom"));
     await Promise.resolve();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralog.ai/v1/logs/single");
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralogs.ai/v1/logs/single");
   });
 
   it("flushes immediately for fatal level", async () => {
     transport.send(makeEntry("fatal", "crash"));
     await Promise.resolve();
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralog.ai/v1/logs/single");
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://ingest.auralogs.ai/v1/logs/single");
   });
 
   it("does not flush when buffer is empty", async () => {
@@ -75,7 +75,7 @@ describe("Transport", () => {
       fetchSpy.mockRejectedValueOnce(new Error("network down"));
       transport.send(makeEntry("info", "lost"));
       await expect(transport.flush()).resolves.toBeUndefined();
-      expect(warnSpy).toHaveBeenCalledWith("auralog: failed to send logs", expect.any(Error));
+      expect(warnSpy).toHaveBeenCalledWith("auralogs: failed to send logs", expect.any(Error));
     });
 
     it("keeps rescheduling the flush loop after a failed flush", async () => {
@@ -97,7 +97,7 @@ describe("Transport", () => {
       // Drain microtasks so the fire-and-forget sendSingle settles.
       for (let i = 0; i < 5; i++) await Promise.resolve();
       expect(unhandled).toEqual([]);
-      expect(warnSpy).toHaveBeenCalledWith("auralog: failed to send log", expect.any(Error));
+      expect(warnSpy).toHaveBeenCalledWith("auralogs: failed to send log", expect.any(Error));
     });
   });
 
@@ -150,7 +150,7 @@ describe("Transport", () => {
     beforeEach(() => {
       cappedTransport = new Transport({
         apiKey: "aura_test",
-        endpoint: "https://ingest.auralog.ai",
+        endpoint: "https://ingest.auralogs.ai",
         flushInterval: 5000,
         maxQueueSize: 3,
         fetchFn: fetchSpy,

@@ -1,42 +1,42 @@
-# auralog-sdk
+# auralogs-sdk
 
-JavaScript/TypeScript SDK for [Auralog](https://auralog.ai) — agentic logging and application awareness.
+JavaScript/TypeScript SDK for [Auralogs](https://auralogs.ai) — agentic logging and application awareness.
 
-Auralog acts as an on-call engineer — powered by your choice of model (Claude, OpenAI, or any MCP-compatible LLM) — monitoring your logs and errors, alerting you when something's wrong, and opening fix PRs automatically.
+Auralogs acts as an on-call engineer — powered by your choice of model (Claude, OpenAI, or any MCP-compatible LLM) — monitoring your logs and errors, alerting you when something's wrong, and opening fix PRs automatically.
 
-[![npm version](https://img.shields.io/npm/v/auralog-sdk.svg)](https://www.npmjs.com/package/auralog-sdk)
-[![provenance verified](https://img.shields.io/badge/provenance-verified-2dba4e?logo=sigstore&logoColor=white)](https://www.npmjs.com/package/auralog-sdk)
-[![license](https://img.shields.io/npm/l/auralog-sdk.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/auralogs-sdk.svg)](https://www.npmjs.com/package/auralogs-sdk)
+[![provenance verified](https://img.shields.io/badge/provenance-verified-2dba4e?logo=sigstore&logoColor=white)](https://www.npmjs.com/package/auralogs-sdk)
+[![license](https://img.shields.io/npm/l/auralogs-sdk.svg)](./LICENSE)
 
 ## Install
 
 ```bash
-npm install auralog-sdk
+npm install auralogs-sdk
 ```
 
 ## Quick start
 
 ```ts
-import { auralog, init } from "auralog-sdk";
+import { auralogs, init } from "auralogs-sdk";
 
 init({
   apiKey: process.env.AURALOG_API_KEY!,
   environment: "production",
-  captureConsole: true,  // forward console.* to Auralog
+  captureConsole: true,  // forward console.* to Auralogs
   captureErrors: true,   // capture uncaught errors (default: true)
 });
 
-auralog.info("user signed in", { userId: "123" });
-auralog.error("payment failed", { orderId: "abc" });
+auralogs.info("user signed in", { userId: "123" });
+auralogs.error("payment failed", { orderId: "abc" });
 ```
 
 ## Configuration
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `apiKey` | `string` | _required_ | Your Auralog project API key |
+| `apiKey` | `string` | _required_ | Your Auralogs project API key |
 | `environment` | `string` | _required_ | e.g. `"production"`, `"staging"`, `"dev"` |
-| `endpoint` | `string` | `https://ingest.auralog.ai` | Ingest endpoint override. Must be `https://` unless `allowInsecureEndpoint` is set. |
+| `endpoint` | `string` | `https://ingest.auralogs.ai` | Ingest endpoint override. Must be `https://` unless `allowInsecureEndpoint` is set. |
 | `allowInsecureEndpoint` | `boolean` | `false` | Permit `http://` endpoints (e.g. `http://localhost:8080` for local dev). Off by default — a plaintext endpoint would leak the API key on the wire. |
 | `flushInterval` | `number` | `5000` | Ms between batched flushes |
 | `maxQueueSize` | `number` | `1000` | Max buffered log entries before the SDK drops the oldest. Bounds memory if the ingest endpoint is unreachable. |
@@ -47,10 +47,10 @@ auralog.error("payment failed", { orderId: "abc" });
 
 ## Attaching session-scoped fields to every log
 
-Use `globalMetadata` to attach things like `user_id`, org id, or feature-flag snapshots to every log Auralog emits — including `console.*` captures and uncaught errors. The supplier form is the canonical recipe because it's evaluated at log time, so it always sees the current host state:
+Use `globalMetadata` to attach things like `user_id`, org id, or feature-flag snapshots to every log Auralogs emits — including `console.*` captures and uncaught errors. The supplier form is the canonical recipe because it's evaluated at log time, so it always sees the current host state:
 
 ```ts
-import { auralog, init } from "auralog-sdk";
+import { auralogs, init } from "auralogs-sdk";
 
 init({
   apiKey: process.env.AURALOG_API_KEY!,
@@ -63,23 +63,23 @@ init({
   }),
 });
 
-auralog.info("checkout started");
+auralogs.info("checkout started");
 // metadata: { user_id: "...", org_id: "..." }
 
-auralog.info("admin impersonating", { user_id: "impersonated-id" });
+auralogs.info("admin impersonating", { user_id: "impersonated-id" });
 // per-call wins: { user_id: "impersonated-id", org_id: "..." }
 ```
 
 A few caveats:
 
-- **Sync only.** The supplier must return synchronously. If it returns a `Promise` (or any thenable), Auralog drops `globalMetadata` for that entry, warns once, and ships the entry without it. Cache async state on the sync side (e.g. in a context-local) before reading it here.
+- **Sync only.** The supplier must return synchronously. If it returns a `Promise` (or any thenable), Auralogs drops `globalMetadata` for that entry, warns once, and ships the entry without it. Cache async state on the sync side (e.g. in a context-local) before reading it here.
 - **Keep it cheap.** The supplier runs on every log emission. Avoid I/O or expensive computation.
-- **If it throws or produces a non-serializable value**, the entry is still delivered — just without `globalMetadata`. Auralog warns once per logger instance and stays silent thereafter.
+- **If it throws or produces a non-serializable value**, the entry is still delivered — just without `globalMetadata`. Auralogs warns once per logger instance and stays silent thereafter.
 
 ## Graceful shutdown
 
 ```ts
-import { shutdown } from "auralog-sdk";
+import { shutdown } from "auralogs-sdk";
 
 process.on("SIGTERM", async () => {
   await shutdown();  // flushes pending logs
@@ -89,7 +89,7 @@ process.on("SIGTERM", async () => {
 
 ## Documentation
 
-Full docs at [docs.auralog.ai](https://docs.auralog.ai).
+Full docs at [docs.auralogs.ai](https://docs.auralogs.ai).
 
 ## Verify this package
 
@@ -101,7 +101,7 @@ To verify in your own project:
 npm audit signatures
 ```
 
-Or inspect the attestation on [npmjs.com/package/auralog-sdk](https://www.npmjs.com/package/auralog-sdk) under "Provenance".
+Or inspect the attestation on [npmjs.com/package/auralogs-sdk](https://www.npmjs.com/package/auralogs-sdk) under "Provenance".
 
 ## Security
 

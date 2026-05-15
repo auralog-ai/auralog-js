@@ -1,14 +1,14 @@
-# Contributing to auralog-sdk
+# Contributing to auralogs-sdk
 
-Thanks for your interest in improving the Auralog JavaScript SDK! This guide covers the basics.
+Thanks for your interest in improving the Auralogs JavaScript SDK! This guide covers the basics.
 
 ## Scope
 
-This repo is the **JavaScript/TypeScript SDK** only. For issues with the Auralog service itself (ingest, dashboard, analysis, billing), head to [auralog.ai](https://auralog.ai) or the [docs](https://docs.auralog.ai).
+This repo is the **JavaScript/TypeScript SDK** only. For issues with the Auralogs service itself (ingest, dashboard, analysis, billing), head to [auralogs.ai](https://auralogs.ai) or the [docs](https://docs.auralogs.ai).
 
 ## Reporting bugs
 
-Open a [bug report](https://github.com/auralog-ai/auralog-js/issues/new?template=bug_report.yml). Include:
+Open a [bug report](https://github.com/auralogs-ai/auralogs-js/issues/new?template=bug_report.yml). Include:
 
 - SDK version
 - Runtime (Node version, browser, Deno, etc.)
@@ -17,7 +17,7 @@ Open a [bug report](https://github.com/auralog-ai/auralog-js/issues/new?template
 
 ## Suggesting features
 
-Open a [feature request](https://github.com/auralog-ai/auralog-js/issues/new?template=feature_request.yml). Describe the use case first, the proposed API second.
+Open a [feature request](https://github.com/auralogs-ai/auralogs-js/issues/new?template=feature_request.yml). Describe the use case first, the proposed API second.
 
 ## Security issues
 
@@ -28,8 +28,8 @@ Open a [feature request](https://github.com/auralog-ai/auralog-js/issues/new?tem
 Requirements: Node ≥ 20, npm.
 
 ```bash
-git clone https://github.com/auralog-ai/auralog-js.git
-cd auralog-js
+git clone https://github.com/auralogs-ai/auralogs-js.git
+cd auralogs-js
 npm ci
 npm test
 ```

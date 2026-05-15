@@ -1,8 +1,33 @@
 # Changelog
 
-All notable changes to `auralog-sdk` are documented here. Format follows
+All notable changes to `auralogs-sdk` (formerly `auralog-sdk`) are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0] - 2026-05-15
+
+### Changed
+
+- **BREAKING: Renamed package** `auralog-sdk` → `auralogs-sdk`. Update your `package.json`:
+  ```diff
+  - "auralog-sdk": "^0.2.0"
+  + "auralogs-sdk": "^1.0.0"
+  ```
+- **BREAKING: Renamed exports** `auralog` → `auralogs`, `AuralogConfig` → `AuralogsConfig`. Update your imports:
+  ```diff
+  - import { auralog } from "auralog-sdk";
+  - import type { AuralogConfig } from "auralog-sdk";
+  + import { auralogs } from "auralogs-sdk";
+  + import type { AuralogsConfig } from "auralogs-sdk";
+  ```
+- Default ingest endpoint updated `https://ingest.auralog.ai` → `https://ingest.auralogs.ai`.
+- Repository moved to https://github.com/auralogs-ai/auralogs-js.
+
+### Migration
+
+Replace the package name + the import + the call sites. There are no other behavior changes — the API surface is identical apart from the renamed exports.
+
+The previous package `auralog-sdk@0.2.0` continues to work but is now deprecated and will not receive updates. New ingest traffic should use `https://ingest.auralogs.ai`.
 
 ## [0.2.0] - 2026-04-25
 

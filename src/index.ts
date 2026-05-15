@@ -4,12 +4,12 @@ import { MetadataMerger } from "./metadata.js";
 import { Transport } from "./transport.js";
 import { startConsoleCapture, stopConsoleCapture } from "./console-capture.js";
 import { startErrorCapture, stopErrorCapture } from "./error-capture.js";
-import type { AuralogConfig, InternalLogEntry } from "./types.js";
+import type { AuralogsConfig, InternalLogEntry } from "./types.js";
 
 let logger: Logger | null = null;
 let transport: Transport | null = null;
 
-const DEFAULT_ENDPOINT = "https://ingest.auralog.ai";
+const DEFAULT_ENDPOINT = "https://ingest.auralogs.ai";
 
 function validateEndpoint(endpoint: string, allowInsecure: boolean): void {
   let parsed: URL;
@@ -17,13 +17,13 @@ function validateEndpoint(endpoint: string, allowInsecure: boolean): void {
     parsed = new URL(endpoint);
   } catch {
     throw new Error(
-      `auralog: invalid endpoint "${endpoint}" — must be a valid URL`,
+      `auralogs: invalid endpoint "${endpoint}" — must be a valid URL`,
     );
   }
   if (parsed.protocol === "https:") return;
   if (parsed.protocol === "http:" && allowInsecure) return;
   throw new Error(
-    `auralog: refusing to use non-https endpoint "${endpoint}". ` +
+    `auralogs: refusing to use non-https endpoint "${endpoint}". ` +
       `The API key is sent in the request body, so plaintext http:// would ` +
       `leak it on the wire. Set allowInsecureEndpoint: true to opt in ` +
       `(intended for local development only).`,
@@ -37,13 +37,13 @@ function validatePositiveInteger(value: unknown, name: string): void {
   if (value === undefined) return;
   if (typeof value !== "number" || !Number.isFinite(value) || !Number.isInteger(value) || value <= 0) {
     throw new Error(
-      `auralog: ${name} must be a positive integer (got ${String(value)})`,
+      `auralogs: ${name} must be a positive integer (got ${String(value)})`,
     );
   }
 }
 
 export function init(
-  config: AuralogConfig,
+  config: AuralogsConfig,
   fetchFn?: typeof fetch
 ): { flush: () => Promise<void> } {
   const endpoint = config.endpoint ?? DEFAULT_ENDPOINT;
@@ -96,7 +96,7 @@ export async function shutdown(): Promise<void> {
 }
 
 function assertInitialized(): Logger {
-  if (!logger) throw new Error("auralog.init() must be called before using the logger");
+  if (!logger) throw new Error("auralogs.init() must be called before using the logger");
   return logger;
 }
 
@@ -108,7 +108,7 @@ export function setTraceId(id: string): void {
   assertInitialized().setTraceId(id);
 }
 
-export const auralog = {
+export const auralogs = {
   debug(message: string, metadata?: Record<string, unknown>) { assertInitialized().debug(message, metadata); },
   info(message: string, metadata?: Record<string, unknown>) { assertInitialized().info(message, metadata); },
   warn(message: string, metadata?: Record<string, unknown>) { assertInitialized().warn(message, metadata); },
@@ -116,4 +116,4 @@ export const auralog = {
   fatal(message: string, metadata?: Record<string, unknown>, stackTrace?: string) { assertInitialized().fatal(message, metadata, stackTrace); },
 };
 
-export type { AuralogConfig, GlobalMetadata, LogLevel } from "./types.js";
+export type { AuralogsConfig, GlobalMetadata, LogLevel } from "./types.js";
