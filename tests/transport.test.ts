@@ -54,6 +54,42 @@ describe("Transport", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
+  describe("redirect handling (Workers-compatible)", () => {
+    let warnSpy: ReturnType<typeof vi.spyOn>;
+    beforeEach(() => { warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {}); });
+    afterEach(() => { warnSpy.mockRestore(); });
+
+    it("refuses a 3xx response without re-sending the body", async () => {
+      fetchSpy.mockResolvedValueOnce({ ok: false, status: 307, type: "basic" } as Response);
+      transport.send(makeEntry("info", "redirected"));
+      await transport.flush();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("refused to follow a redirect"));
+    });
+
+    it("refuses an opaque redirect (browser manual mode) the same way", async () => {
+      fetchSpy.mockResolvedValueOnce({ ok: false, status: 0, type: "opaqueredirect" } as Response);
+      transport.send(makeEntry("error", "opaque"));
+      await Promise.resolve();
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("refused to follow a redirect"));
+    });
+
+    it("warns on a non-2xx ingest response instead of dropping silently", async () => {
+      fetchSpy.mockResolvedValueOnce({ ok: false, status: 401, type: "basic" } as Response);
+      transport.send(makeEntry("info", "unauthorized"));
+      await transport.flush();
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("ingest responded 401"));
+    });
+
+    it("stays quiet on a 2xx response", async () => {
+      fetchSpy.mockResolvedValueOnce({ ok: true, status: 200, type: "basic" } as Response);
+      transport.send(makeEntry("info", "fine"));
+      await transport.flush();
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+  });
+
   describe("network error handling", () => {
     let warnSpy: ReturnType<typeof vi.spyOn>;
     let unhandled: unknown[];
@@ -102,18 +138,18 @@ describe("Transport", () => {
   });
 
   describe("redirect handling", () => {
-    it("passes redirect: 'error' to every fetch call (batch flush)", async () => {
+    it("passes redirect: 'manual' to every fetch call (batch flush) — Workers rejects 'error'", async () => {
       transport.send(makeEntry("info", "one"));
       await transport.flush();
       expect(fetchSpy).toHaveBeenCalledTimes(1);
-      expect(fetchSpy.mock.calls[0][1].redirect).toBe("error");
+      expect(fetchSpy.mock.calls[0][1].redirect).toBe("manual");
     });
 
-    it("passes redirect: 'error' on the single-error fast path", async () => {
+    it("passes redirect: 'manual' on the single-error fast path — Workers rejects 'error'", async () => {
       transport.send(makeEntry("error", "boom"));
       await Promise.resolve();
       expect(fetchSpy).toHaveBeenCalledTimes(1);
-      expect(fetchSpy.mock.calls[0][1].redirect).toBe("error");
+      expect(fetchSpy.mock.calls[0][1].redirect).toBe("manual");
     });
 
     // Behavioral test: replace the fetch spy with one that rejects unless
