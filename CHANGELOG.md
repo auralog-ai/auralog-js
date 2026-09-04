@@ -4,6 +4,19 @@ All notable changes to `auralogs-sdk` (formerly `auralog-sdk`) are documented he
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-09-04
+
+### Fixed
+
+- **Cloudflare Workers never delivered logs.** The transport sent every request
+  with `redirect: "error"`, which Workers' `fetch` rejects outright
+  (`Invalid redirect value, must be one of "follow" or "manual"`). The throw was
+  caught and reported only via `console.warn`, so from a Worker every log was
+  silently dropped. Requests now use `redirect: "manual"`; a redirect response
+  is detected and refused without re-sending the body (the original security
+  intent is preserved), and non-2xx ingest responses are surfaced with a
+  `console.warn` instead of being ignored.
+
 ## [1.0.0] - 2026-05-15
 
 ### Changed
